@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.canvascity" />
+                  <option name="mobileSdkAppId" value="1:266875369888:android:7e798300feeec1a44b0cc5" />
+                  <option name="projectId" value="canvascity-a5655" />
+                  <option name="projectNumber" value="266875369888" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "266875369888",
+    "project_id": "canvascity-a5655",
+    "storage_bucket": "canvascity-a5655.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:266875369888:android:7e798300feeec1a44b0cc5",
+        "android_client_info": {
+          "package_name": "com.example.canvascity"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCltx-hpYMr0RFKsEOYQAIh5SfjKg006UQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

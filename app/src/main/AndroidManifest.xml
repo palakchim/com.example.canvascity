@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
+<uses-permission android:name="android.permission.INTERNET">
+</uses-permission>
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/cclogo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/cclogo"
         android:supportsRtl="true"
         android:theme="@style/Theme.CanvasCity"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
             android:name=".Activity.InviteFriendsActivity"
@@ -29,11 +31,14 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="YOUR_API_KEY" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
         <activity
             android:name=".Activity.LocationActivity"
             android:exported="false"
-            android:label="@string/title_activity_location" />
+           />
         <activity
             android:name=".Activity.AboutUsActivity"
             android:exported="false" />
@@ -60,6 +65,9 @@
             android:exported="false" />
         <activity
             android:name=".Activity.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.WelcomeActivity"
             android:exported="false" />
         <activity
             android:name=".Activity.SplashActivity"

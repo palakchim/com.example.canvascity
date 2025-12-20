@@ -1,4 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Profile -->
+    <item
+        android:id="@+id/menu_profile"
+        android:title="Profile"
+        android:icon="@drawable/user"
+        app:showAsAction="always" />
+
+    <!-- Report Issue -->
+    <item
+        android:id="@+id/menu_report"
+        android:title="Report Issue"
+        app:showAsAction="never" />
+
+    <!-- Logout -->
+    <item
+        android:id="@+id/menu_logout"
+        android:title="Logout"
+        android:icon="@drawable/logout"
+        app:showAsAction="always" />
 
 </menu>

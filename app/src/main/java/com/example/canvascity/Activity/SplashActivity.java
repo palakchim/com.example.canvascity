@@ -24,7 +24,7 @@ public class SplashActivity extends AppCompatActivity {
 
         // Delay for 3 seconds, then go to MainActivity
         new Handler().postDelayed(() -> {
-            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+            Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
             startActivity(intent);
             finish(); // close splash so user can’t go back
         }, SPLASH_DURATION);

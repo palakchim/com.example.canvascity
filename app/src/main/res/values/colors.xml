@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <color name="black">#FF000000</color>
     <color name="navy">#2F4156</color>
     <color name="teal">#567C8D</color>
     <color name="sky_blue">#C8D9E6</color>
     <color name="beige">#F5EFEB</color>
     <color name="white">#FFFFFF</color>
-  <selector xmlns:android="http://schemas.android.com/apk/res/android">
-        <item android:color="#000000" android:state_checked="true"/>
-        <item android:color="#80000000" android:state_checked="false"/>
-    </selector>
+
 </resources>
 
 

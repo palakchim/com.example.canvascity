@@ -5,6 +5,9 @@ import static android.icu.text.DisplayOptions.DisplayLength.LENGTH_SHORT;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -29,12 +32,18 @@ import cz.msebera.android.httpclient.Header;
 public class ProfileActivity extends AppCompatActivity {
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
+    ImageView iv=findViewById(R.id.imgProfile);
+    EditText tvname,tvemail;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
        preferences= PreferenceManager.getDefaultSharedPreferences(this);
        editor=preferences.edit();
+       tvname=findViewById(R.id.etName);
+       tvemail=findViewById(R.id.etEmail);
+
+
     }
 
     @Override
@@ -62,13 +71,17 @@ public class ProfileActivity extends AppCompatActivity {
                         String stremail=jsonObject.getString("email");
                         String strmobile=jsonObject.getString("mobile");
                         String strpassword=jsonObject.getString("password");
+                       // String strrole=jsonObject.getString("role");
+                        //yet to add
                         String strimage=jsonObject.getString("image");
 Toast.makeText(ProfileActivity.this,"image name:"+strimage, Toast.LENGTH_SHORT).show();
 Glide.with(ProfileActivity.this)
                                 .load("http://ipv4:80/CanvasCityApi/images"+strimage)
                                 .skipMemoryCache(true)
                                 .error(R.drawable.user)
-                                .into(/*imageview ka widget object*/);
+                                .into(iv);
+tvemail.setText(stremail);
+tvname.setText(strname);
 //set text krna pdega on all widgets//after creating
 
                     }

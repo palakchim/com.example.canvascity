@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item
-        android:id="@+id/nav_ai"
-        android:icon="@drawable/ai"
-        android:title="AI" />
-
-    <item
-        android:id="@+id/nav_wardrobe"
-        android:icon="@drawable/wardrobe"
-        android:title="Wardrobe" />
-
     <item
         android:id="@+id/nav_events"
         android:icon="@drawable/party"
         android:title="Events" />
 
     <item
+        android:id="@+id/nav_wardrobe"
+        android:icon="@drawable/wardrobe"
+        android:title="Wardrobe" />
+
+
+
+    <item
         android:id="@+id/nav_small_business"
         android:icon="@drawable/cooperation"
         android:title="Business" />
+    <item
+        android:id="@+id/nav_ai"
+        android:icon="@drawable/ai"
+        android:title="AI" />
 
 </menu>

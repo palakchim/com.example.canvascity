@@ -1,14 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragmet.YourAiFragment">
+    android:background="#F5EFE8">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!-- AI Header -->
+    <LinearLayout
+        android:id="@+id/aiHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tvAiTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AI Stylist"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#000000" />
+
+        <TextView
+            android:id="@+id/tvAiSub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Smart outfit suggestions for every event"
+            android:textSize="14sp"
+            android:textColor="#000000"
+            android:layout_marginTop="4dp" />
+
+    </LinearLayout>
+
+    <!-- AI Illustration -->
+    <ImageView
+        android:id="@+id/imgAi"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:src="@drawable/ai2"
+        android:contentDescription="AI Illustration"
+        app:layout_constraintTop_toBottomOf="@id/aiHeader"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp" />
+
+    <!-- Input Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardAiInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="4dp"
+        app:layout_constraintTop_toBottomOf="@id/imgAi"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Describe your event"
+                android:textColor="#000000"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etEvent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Wedding, Party, Office, Body type..."
+                android:backgroundTint="#000000"
+                android:textColor="#000000"
+                android:layout_marginTop="8dp" />
+
+            <Button
+                android:id="@+id/btnAiSuggest"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Get AI Suggestion"
+                android:textAllCaps="false"
+                android:textColor="#000000"
+                android:background="@drawable/btn_border_black"
+                android:layout_marginTop="16dp" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- AI Response Placeholder -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/tvAiResponse"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="✨ AI suggestions will appear here"
+        android:textColor="#000000"
+        android:gravity="center"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/cardAiInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

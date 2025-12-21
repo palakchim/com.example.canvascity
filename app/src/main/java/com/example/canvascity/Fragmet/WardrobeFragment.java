@@ -1,66 +1,104 @@
 package com.example.canvascity.Fragmet;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
+import com.example.canvascity.Activity.AboutUsActivity;
+import com.example.canvascity.Activity.ProfileActivity;
+import com.example.canvascity.Activity.SettingsActivity;
 import com.example.canvascity.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link WardrobeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class WardrobeFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public WardrobeFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment WardrobeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static WardrobeFragment newInstance(String param1, String param2) {
-        WardrobeFragment fragment = new WardrobeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        // ✅ Enable fragment menu
+        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_wardrobe, container, false);
+    }
+
+    // ✅ Inflate top 3-dot menu
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.top_menu_wardrobe, menu); // your menu XML file
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    // ✅ Handle menu clicks
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if (item.getItemId() == R.id.menu_profile) {
+            startActivity(new Intent(getActivity(), ProfileActivity.class));
+            return true;
+
+        } else if (item.getItemId() == R.id.menu_cart) {
+            Toast.makeText(getActivity(), "Cart clicked", Toast.LENGTH_SHORT).show();
+            return true;
+
+        } else if (item.getItemId() == R.id.menu_wardrobe) {
+            Toast.makeText(getActivity(), "Your Wardrobe clicked", Toast.LENGTH_SHORT).show();
+            return true;
+
+        } else if (item.getItemId() == R.id.menu_wishlist) {
+            Toast.makeText(getActivity(), "Wishlist clicked", Toast.LENGTH_SHORT).show();
+            return true;
+
+        } else if (item.getItemId() == R.id.menu_seller) {
+            Toast.makeText(getActivity(), "Become a Seller clicked", Toast.LENGTH_SHORT).show();
+            return true;
+
+        } else if (item.getItemId() == R.id.menu_settings) {
+            startActivity(new Intent(getActivity(), SettingsActivity.class));
+            return true;
+
+        } else if (item.getItemId() == R.id.menu_about) {
+            startActivity(new Intent(getActivity(), AboutUsActivity.class));
+            return true;
+
+        } else if (item.getItemId() == R.id.menu_report) {
+            Toast.makeText(getActivity(), "Report clicked", Toast.LENGTH_SHORT).show();
+            return true;
+
+        } else if (item.getItemId() == R.id.menu_logout) {
+            showLogoutDialog();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    // ✅ Logout dialog
+    private void showLogoutDialog() {
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Log Out")
+                .setMessage("Are you sure you want to logout?")
+                .setPositiveButton("Logout", (dialog, which) -> {
+                    Toast.makeText(getActivity(), "Logged Out", Toast.LENGTH_SHORT).show();
+                    // signOutUser(); // optional
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .show();
     }
 }

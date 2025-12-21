@@ -6,15 +6,15 @@
     android:layout_height="match_parent"
     android:background="#F5EFE8">
 
-    <!-- Top Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#2F4156"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:titleTextColor="@android:color/white"
         app:title="Canvas City"
-        app:titleTextColor="@android:color/white" />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
 
     <!-- Content Area -->
     <FrameLayout

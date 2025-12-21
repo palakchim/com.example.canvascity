@@ -21,12 +21,21 @@ import androidx.fragment.app.Fragment;
 import com.example.canvascity.Activity.ProfileActivity;
 import com.example.canvascity.R;
 
-import java.util.HashMap;
+import java.util.HashMap;import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import java.util.ArrayList;
+
 
 public class YourAiFragment extends Fragment {
     private EditText etEvent;
     private Button btnAiSuggest;
     private TextView tvAiResponse;
+    private ListView listSuggestions;
+    private ArrayAdapter<String> suggestionAdapter;
+    private ArrayList<String> suggestionList = new ArrayList<>();
+
     private HashMap<String, String> qaMap = new HashMap<>();
 
     public YourAiFragment() {
@@ -45,6 +54,21 @@ public class YourAiFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_your_ai, container, false);
+        listSuggestions = view.findViewById(R.id.listSuggestions);
+
+        suggestionAdapter = new ArrayAdapter<>(
+                getActivity(),
+                android.R.layout.simple_list_item_1,
+                suggestionList
+        );
+
+        listSuggestions.setAdapter(suggestionAdapter);
+        listSuggestions.setOnItemClickListener((parent, view1, position, id) -> {
+            String selected = suggestionList.get(position);
+            etEvent.setText(selected);
+            etEvent.setSelection(selected.length());
+            listSuggestions.setVisibility(View.GONE);
+        });
 
         etEvent = view.findViewById(R.id.etEvent);
         btnAiSuggest = view.findViewById(R.id.btnAiSuggest);
@@ -64,9 +88,43 @@ public class YourAiFragment extends Fragment {
             String answer = getClosestAnswer(userInput); // will add fuzzy logic next
             tvAiResponse.setText(answer);
         });
+        etEvent.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                showSuggestions(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
 
         return view;
     }
+    private void showSuggestions(String query) {
+        suggestionList.clear();
+
+        if (query.length() < 2) {
+            listSuggestions.setVisibility(View.GONE);
+            return;
+        }
+
+        for (String question : qaMap.keySet()) {
+            if (question.toLowerCase().contains(query.toLowerCase())) {
+                suggestionList.add(question);
+            }
+        }
+
+        if (suggestionList.isEmpty()) {
+            listSuggestions.setVisibility(View.GONE);
+        } else {
+            listSuggestions.setVisibility(View.VISIBLE);
+            suggestionAdapter.notifyDataSetChanged();
+        }
+    }
+
     private String getClosestAnswer(String userInput) {
         String closestQuestion = null;
         int minDistance = Integer.MAX_VALUE;

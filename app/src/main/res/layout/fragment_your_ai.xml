@@ -34,7 +34,6 @@
             android:textSize="14sp"
             android:textColor="#000000"
             android:layout_marginTop="4dp" />
-
     </LinearLayout>
 
     <!-- AI Illustration -->
@@ -56,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
         app:cardCornerRadius="20dp"
-        app:cardElevation="4dp"
+        app:cardElevation="6dp"
         app:layout_constraintTop_toBottomOf="@id/imgAi"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -73,34 +72,45 @@
                 android:text="Describe your event"
                 android:textColor="#000000"
                 android:textStyle="bold" />
+
+            <!-- ✅ CLEAN DROPDOWN SUGGESTIONS -->
             <ListView
                 android:id="@+id/listSuggestions"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="160dp"
+                android:layout_marginTop="8dp"
                 android:visibility="gone"
-                android:dividerHeight="1dp"/>
+                android:background="#FFFFFF"
+                android:dividerHeight="1dp"
+                android:scrollbars="vertical"
+                android:elevation="8dp" />
 
+            <!-- Input Row -->
             <LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-android:orientation="horizontal">            <EditText
-                android:id="@+id/etEvent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Wedding, Party, Office, Body type..."
-                android:backgroundTint="#000000"
-                android:textColor="#000000"
-                android:layout_marginTop="8dp" />
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="50dp"
-        android:paddingLeft="2dp"
-        android:src="@drawable/gallery2"
-        android:contentDescription="AI Suggestion">
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp">
 
-    </ImageView>
+                <EditText
+                    android:id="@+id/etEvent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Wedding, Party, Office, Body type..."
+                    android:backgroundTint="#000000"
+                    android:textColor="#000000"
+                    android:padding="10dp" />
 
-</LinearLayout>
+                <ImageView
+                    android:id="@+id/imgGallery"
+                    android:layout_width="40dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:src="@drawable/gallery2"
+                    android:contentDescription="Open Gallery" />
+            </LinearLayout>
 
             <Button
                 android:id="@+id/btnAiSuggest"
@@ -111,11 +121,10 @@ android:orientation="horizontal">            <EditText
                 android:textColor="#000000"
                 android:backgroundTint="@color/sky_blue"
                 android:layout_marginTop="16dp" />
-
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-
+    <!-- AI Response -->
     <TextView
         android:id="@+id/tvAiResponse"
         android:layout_width="0dp"

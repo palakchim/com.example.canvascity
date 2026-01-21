@@ -1,17 +1,22 @@
 package com.example.canvascity.Fragmet;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,22 +26,25 @@ import androidx.fragment.app.Fragment;
 import com.example.canvascity.Activity.ProfileActivity;
 import com.example.canvascity.R;
 
-import java.util.HashMap;import android.text.Editable;
-import android.text.TextWatcher;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import java.util.ArrayList;
-
+import java.util.HashMap;
 
 public class YourAiFragment extends Fragment {
+
+    // Views
     private EditText etEvent;
     private Button btnAiSuggest;
     private TextView tvAiResponse;
+    private ImageView imgGallery;
     private ListView listSuggestions;
-    private ArrayAdapter<String> suggestionAdapter;
-    private ArrayList<String> suggestionList = new ArrayList<>();
 
+    // Data
     private HashMap<String, String> qaMap = new HashMap<>();
+    private ArrayList<String> suggestionList = new ArrayList<>();
+    private ArrayAdapter<String> suggestionAdapter;
+
+    // Gallery request code
+    private static final int PICK_IMAGE = 1001;
 
     public YourAiFragment() {
         // Required empty public constructor
@@ -45,8 +53,7 @@ public class YourAiFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // ✅ VERY IMPORTANT for fragment menu
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(true); // menu enabled
     }
 
     @Override
@@ -54,15 +61,56 @@ public class YourAiFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_your_ai, container, false);
-        listSuggestions = view.findViewById(R.id.listSuggestions);
 
+        // ✅ 1️⃣ Initialize ALL views FIRST
+        etEvent = view.findViewById(R.id.etEvent);
+        btnAiSuggest = view.findViewById(R.id.btnAiSuggest);
+        tvAiResponse = view.findViewById(R.id.tvAiResponse);
+        listSuggestions = view.findViewById(R.id.listSuggestions);
+        imgGallery = view.findViewById(R.id.imgGallery);
+
+        // ✅ 2️⃣ Initialize data
+        initQA();
+
+        // ✅ 3️⃣ Setup suggestion adapter
         suggestionAdapter = new ArrayAdapter<>(
                 getActivity(),
                 android.R.layout.simple_list_item_1,
                 suggestionList
         );
-
         listSuggestions.setAdapter(suggestionAdapter);
+        etEvent.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                String query = s.toString().toLowerCase().trim();
+                suggestionList.clear();
+
+                if (!query.isEmpty()) {
+                    for (String question : qaMap.keySet()) {
+                        if (question.toLowerCase().contains(query)) {
+                            suggestionList.add(question);
+                        }
+                    }
+                }
+
+                if (suggestionList.isEmpty()) {
+                    listSuggestions.setVisibility(View.GONE);
+                } else {
+                    listSuggestions.setVisibility(View.VISIBLE);
+                }
+
+                suggestionAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
+
+        // ✅ 4️⃣ List item click
         listSuggestions.setOnItemClickListener((parent, view1, position, id) -> {
             String selected = suggestionList.get(position);
             etEvent.setText(selected);
@@ -70,97 +118,85 @@ public class YourAiFragment extends Fragment {
             listSuggestions.setVisibility(View.GONE);
         });
 
-        etEvent = view.findViewById(R.id.etEvent);
-        btnAiSuggest = view.findViewById(R.id.btnAiSuggest);
-        tvAiResponse = view.findViewById(R.id.tvAiResponse);
-
-        tvAiResponse.setMovementMethod(new ScrollingMovementMethod());
-
-        initQA(); // load your preset questions
-
+        // ✅ 5️⃣ Button click → AI response
         btnAiSuggest.setOnClickListener(v -> {
             String userInput = etEvent.getText().toString().trim();
-            if(userInput.isEmpty()){
-                tvAiResponse.setText("Please enter your event or question!");
+
+            if (userInput.isEmpty()) {
+                Toast.makeText(getActivity(), "Please describe your event", Toast.LENGTH_SHORT).show();
                 return;
             }
 
+
             String answer = getClosestAnswer(userInput); // will add fuzzy logic next
             tvAiResponse.setText(answer);
-        });
-        etEvent.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                showSuggestions(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
         });
+
+        // ✅ 6️⃣ Gallery click
+        imgGallery.setOnClickListener(v -> openGallery());
 
         return view;
     }
-    private void showSuggestions(String query) {
-        suggestionList.clear();
 
-        if (query.length() < 2) {
-            listSuggestions.setVisibility(View.GONE);
-            return;
+    // ================= MENU ==================
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.top_menu_events, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if (item.getItemId() == R.id.menu_profile) {
+            startActivity(new Intent(getActivity(), ProfileActivity.class));
+            return true;
+
+        } else if (item.getItemId() == R.id.menu_report) {
+            Toast.makeText(getActivity(), "Report clicked", Toast.LENGTH_SHORT).show();
+            return true;
+
+        } else if (item.getItemId() == R.id.menu_logout) {
+            showLogoutDialog();
+            return true;
         }
 
-        for (String question : qaMap.keySet()) {
-            if (question.toLowerCase().contains(query.toLowerCase())) {
-                suggestionList.add(question);
-            }
-        }
+        return super.onOptionsItemSelected(item);
+    }
 
-        if (suggestionList.isEmpty()) {
-            listSuggestions.setVisibility(View.GONE);
-        } else {
-            listSuggestions.setVisibility(View.VISIBLE);
-            suggestionAdapter.notifyDataSetChanged();
+    private void showLogoutDialog() {
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Log Out")
+                .setMessage("Are you sure you want to logout?")
+                .setPositiveButton("Logout", (dialog, which) ->
+                        Toast.makeText(getActivity(), "Logged Out", Toast.LENGTH_SHORT).show())
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    // ================= GALLERY ==================
+
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PICK_IMAGE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK && data != null) {
+            Uri imageUri = data.getData();
+            Toast.makeText(getActivity(), "Image selected ✔", Toast.LENGTH_SHORT).show();
+
+            // Later you can analyze image for outfit suggestions
         }
     }
 
-    private String getClosestAnswer(String userInput) {
-        String closestQuestion = null;
-        int minDistance = Integer.MAX_VALUE;
+    // ================= AI LOGIC ==================
 
-        for (String question : qaMap.keySet()) {
-            int distance = levenshteinDistance(userInput.toLowerCase(), question.toLowerCase());
-            if (distance < minDistance) {
-                minDistance = distance;
-                closestQuestion = question;
-            }
-        }
-
-        if(minDistance > 30){ // adjust threshold if needed
-            return "Sorry, I don't have a suggestion for that yet.";
-        }
-
-        return qaMap.get(closestQuestion);
-    }
-
-    private int levenshteinDistance(String s1, String s2) {
-        int[][] dp = new int[s1.length() + 1][s2.length() + 1];
-
-        for(int i = 0; i <= s1.length(); i++) dp[i][0] = i;
-        for(int j = 0; j <= s2.length(); j++) dp[0][j] = j;
-
-        for(int i = 1; i <= s1.length(); i++) {
-            for(int j = 1; j <= s2.length(); j++) {
-                int cost = s1.charAt(i - 1) == s2.charAt(j - 1) ? 0 : 1;
-                dp[i][j] = Math.min(
-                        Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1),
-                        dp[i - 1][j - 1] + cost
-                );
-            }
-        }
-        return dp[s1.length()][s2.length()];
-    }
     private void initQA() {
         // 1-20
         qaMap.put("Should I wear jeans or chinos today?", "Jeans are versatile for casual looks, chinos are slightly smarter.");
@@ -360,60 +396,234 @@ public class YourAiFragment extends Fragment {
         qaMap.put("What accessories with casual T-shirt?", "Watch, bracelet, hat, or small necklace.");
         qaMap.put("Can I wear black shoes with gray pants?", "Yes, classic and formal.");
         qaMap.put("Should I wear patterned socks with casual outfit?", "Yes, subtle patterns work well.");
+        qaMap.put("What color shoes with white pants?", "Brown, tan, or white sneakers work best for a clean look.");
+        qaMap.put("What color shirt goes with black jeans?", "White, grey, pastel, or olive look great with black jeans.");
+        qaMap.put("Can I wear black with brown?", "Yes, black and brown can look classy if shades are balanced.");
+        qaMap.put("What colors go with beige pants?", "White, navy, black, olive, and pastel shades pair well.");
+        qaMap.put("Is navy better than black?", "Navy looks softer and more versatile for daytime outfits.");
+        qaMap.put("What color top with blue jeans?", "White, black, grey, pastel pink, or light blue work well.");
+        qaMap.put("Can I wear white shoes daily?", "Yes, but keep them clean and avoid muddy or rainy days.");
+        qaMap.put("What color jacket goes with everything?", "Black, denim blue, or beige jackets are most versatile.");
+        qaMap.put("Is all black outfit okay?", "Yes, all-black looks sleek if textures are mixed.");
+        qaMap.put("What colors look expensive?", "Neutral tones like beige, camel, navy, and grey.");
+        qaMap.put("What color pants with white shirt?", "Black, navy, grey, beige, or olive pants work perfectly.");
+        qaMap.put("Can I mix blue and black?", "Yes, especially dark blue with black for a modern look.");
+        qaMap.put("What color shoes with blue jeans?", "White, brown, tan, or black depending on the vibe.");
+        qaMap.put("What colors clash together?", "Neon shades with muted tones usually clash.");
+        qaMap.put("Is grey a safe color?", "Yes, grey is extremely versatile and neutral.");
+        qaMap.put("What color kurta suits everyone?", "White, cream, and light blue suit most people.");
+        qaMap.put("What color dress for night events?", "Black, wine, emerald, or navy work best at night.");
+        qaMap.put("Can I wear pastel in winter?", "Yes, pair pastels with darker layers.");
+        qaMap.put("What color jeans are most versatile?", "Dark blue and black jeans are most versatile.");
+        qaMap.put("What colors make you look taller?", "Monochrome and darker shades elongate your look.");
+        qaMap.put("What colors suit fair skin?", "Pastels, navy, emerald, and soft pink look great.");
+        qaMap.put("What colors suit medium skin tone?", "Olive, mustard, navy, maroon, and white work well.");
+        qaMap.put("What colors suit dusky skin?", "Bright colors like yellow, teal, red, and white shine.");
+        qaMap.put("Should fair skin avoid yellow?", "Very pale yellow may wash out fair skin.");
+        qaMap.put("Does black suit all skin tones?", "Yes, black flatters almost everyone.");
+        qaMap.put("What lipstick color suits dusky skin?", "Berry, wine, brown, and red shades look great.");
+        qaMap.put("What colors brighten dark skin?", "White, cobalt blue, orange, and neon shades.");
+        qaMap.put("Is beige good for dusky skin?", "Yes, when paired with contrast accessories.");
+        qaMap.put("What colors suit warm undertone?", "Earthy tones like mustard, olive, and rust.");
+        qaMap.put("What colors suit cool undertone?", "Blues, purples, emerald, and grey.");
+        qaMap.put("How to know my undertone?", "Check vein color or jewelry preference.");
+        qaMap.put("Can fair skin wear black?", "Yes, black creates a sharp contrast on fair skin.");
+        qaMap.put("Best kurta color for dusky skin?", "Royal blue, maroon, and off-white.");
+        qaMap.put("Best saree color for fair skin?", "Red, pastel pink, and emerald green.");
+        qaMap.put("What colors to avoid for dark skin?", "Very dull browns close to skin tone.");
+        qaMap.put("What to wear to college daily?", "Comfortable jeans, T-shirt, and sneakers.");
+        qaMap.put("What to wear to a wedding?", "Ethnic wear or formal traditional outfits.");
+        qaMap.put("What to wear on a date?", "Something comfortable but polished like a fitted top and jeans.");
+        qaMap.put("What to wear to office?", "Formal shirts, trousers, or smart casuals.");
+        qaMap.put("What to wear to a party?", "Statement top, fitted bottoms, and accessories.");
+        qaMap.put("What to wear to an interview?", "Neutral formal attire with minimal accessories.");
+        qaMap.put("What to wear to a funeral?", "Muted colors like black, grey, or navy.");
+        qaMap.put("What to wear on festivals?", "Bright ethnic outfits or traditional wear.");
+        qaMap.put("What to wear to a night out?", "Dark colors with bold accessories.");
+        qaMap.put("What to wear to brunch?", "Light colors, flowy tops, and minimal makeup.");
+        qaMap.put("What to wear on first day?", "Simple, neat, and confident outfit.");
+        qaMap.put("What to wear to a family function?", "Traditional or semi-ethnic outfits.");
+        qaMap.put("What to wear to a meeting?", "Well-fitted formal or smart casuals.");
+        qaMap.put("What to wear to travel?", "Comfortable clothes with layers.");
+        qaMap.put("What to wear to beach?", "Breathable fabrics like cotton and linen.");
+        qaMap.put("What suits a petite body?", "High-waisted bottoms and fitted tops.");
+        qaMap.put("What suits a curvy body?", "Wrap dresses and structured outfits.");
+        qaMap.put("What suits tall girls?", "Wide-leg pants and long dresses.");
+        qaMap.put("What suits short height?", "Monochrome outfits and cropped jackets.");
+        qaMap.put("How to look taller?", "Vertical stripes and fitted silhouettes.");
+        qaMap.put("How to hide tummy?", "High-waisted bottoms and flowy tops.");
+        qaMap.put("What jeans suit pear shape?", "Straight-leg or bootcut jeans.");
+        qaMap.put("What jeans suit apple shape?", "High-rise straight jeans.");
+        qaMap.put("What dresses suit hourglass?", "Bodycon and wrap dresses.");
+        qaMap.put("What tops suit broad shoulders?", "V-neck and flowy tops.");
+        qaMap.put("What shoes go with dresses?", "Heels, flats, or sneakers based on dress style.");
+        qaMap.put("Can sneakers go with jeans?", "Yes, sneakers pair perfectly with jeans.");
+        qaMap.put("What shoes for formal wear?", "Loafers, heels, or formal shoes.");
+        qaMap.put("What accessories elevate outfit?", "Watch, belt, and minimal jewelry.");
+        qaMap.put("Is belt necessary?", "Belts help define the waist and polish look.");
+        qaMap.put("What bag suits casual outfits?", "Tote or sling bags work best.");
+        qaMap.put("What jewelry for daily wear?", "Minimal studs or small hoops.");
+        qaMap.put("Can gold and silver mix?", "Yes, when done subtly.");
+        qaMap.put("What shoes for ethnic wear?", "Juttis, mojris, or sandals.");
+        qaMap.put("Are watches important?", "Watches add structure and style.");
+        qaMap.put("What to wear in summer?", "Light fabrics like cotton and linen.");
+        qaMap.put("What to wear in winter?", "Layers, jackets, and warm fabrics.");
+        qaMap.put("What colors for summer?", "White, pastels, and light shades.");
+        qaMap.put("What colors for winter?", "Dark shades like maroon and navy.");
+        qaMap.put("What are wardrobe basics?", "White tee, jeans, black jacket.");
+        qaMap.put("How many basics should I own?", "At least 10–15 versatile pieces.");
+        qaMap.put("Can basics look stylish?", "Yes, with good fit and layering.");
+        qaMap.put("How to repeat outfits?", "Change accessories or layers.");
+        qaMap.put("Is denim always in style?", "Yes, denim never goes out of fashion.");
+        qaMap.put("What fabric is most comfortable?", "Cotton is best for daily wear.");
+        qaMap.put("What color shirt goes with black jeans?",
+                "Black jeans are versatile—white, grey, beige, or pastel shirts work really well.");
 
-        // 81-165
-        // Continue in same format, covering:
-        // Seasonal styles: spring, summer, autumn, winter
-        // Casual vs formal events
-        // Color coordination (red, blue, green, yellow, pastel)
-        // Accessories: belts, watches, bracelets, hats, bags
-        // Footwear: sneakers, boots, loafers, dress shoes
-        // Outfit combinations: layers, patterns, stripes, solids
-        // Occasions: date, office, party, wedding, casual outing
-        // Body type suggestions: slim, tall, curvy, petite
-        // Wardrobe basics: t-shirts, shirts, jeans, chinos, dresses, skirts
-        // Safety nets: "I don't have an exact suggestion, neutral options work"
-        // The exact text can be filled by repeating the qaMap.put("question","answer") pattern.
+        qaMap.put("What color top suits blue jeans?",
+                "Blue jeans pair easily with white, black, pastel, or earthy tones like brown and olive.");
+
+        qaMap.put("Can I wear white shirt with beige pants?",
+                "Yes, white and beige look clean, elegant, and very balanced together.");
+
+        qaMap.put("What colors go with grey trousers?",
+                "Grey trousers go well with black, white, navy blue, and soft pastel shades.");
+
+        qaMap.put("Which color jeans match a pastel top?",
+                "Light blue, white, or beige jeans complement pastel tops best.");
+
+        qaMap.put("What color pants with a black top?",
+                "Black tops look great with blue jeans, beige pants, grey trousers, or white pants.");
+
+        qaMap.put("Can brown and black be worn together?",
+                "Yes, when styled properly, brown and black can look very classy and modern.");
+
+        qaMap.put("What colors go with olive green?",
+                "Olive green pairs well with white, beige, black, brown, and cream shades.");
+
+        qaMap.put("What color goes best with navy blue?",
+                "White, beige, grey, and light pink complement navy blue beautifully.");
+
+        qaMap.put("Can I wear white on white?",
+                "Yes, white-on-white looks elegant—just add contrast with accessories.");
+
+        qaMap.put("What shoes go with white pants?",
+                "Brown, tan, or white sneakers work best for a clean casual look.");
+
+        qaMap.put("Which shoes suit black jeans?",
+                "Black jeans go well with sneakers, boots, loafers, or even formal shoes.");
+
+        qaMap.put("Can sneakers be worn with dresses?",
+                "Yes, sneakers with dresses create a comfortable and trendy casual style.");
+
+        qaMap.put("What footwear is best for office wear?",
+                "Loafers, formal shoes, block heels, or clean flats are ideal for office wear.");
+
+        qaMap.put("Are loafers good for casual outfits?",
+                "Yes, loafers are stylish and comfortable for smart-casual looks.");
+
+        qaMap.put("What shoes go with ethnic wear?",
+                "Ethnic outfits pair well with juttis, sandals, or traditional flats.");
+
+        qaMap.put("Can heels be worn with jeans?",
+                "Yes, heels with jeans elevate the outfit and make it look more polished.");
+
+        qaMap.put("What color shoes with pastel outfits?",
+                "Neutral shades like white, beige, nude, or soft brown work best.");
+
+        qaMap.put("What colors suit fair skin tone?",
+                "Pastels, soft pinks, blues, and light neutrals usually suit fair skin well.");
+
+        qaMap.put("What colors suit dusky skin?",
+                "Bright colors, jewel tones, and warm shades look stunning on dusky skin.");
+
+        qaMap.put("What colors look good on wheatish skin?",
+                "Earthy tones, warm pastels, and rich colors complement wheatish skin nicely.");
+
+        qaMap.put("Should dark skin avoid bright colors?",
+                "Not at all—bright and bold colors actually enhance dark skin tones.");
+
+        qaMap.put("What lipstick color suits my skin tone?",
+
+                "Choose nude or pink for fair skin, warm browns for wheatish, and bold shades for dusky skin.");
+
+        qaMap.put("What should I wear to a wedding?",
+                "Ethnic wear, elegant dresses, or festive outfits are ideal for weddings.");
+
+        qaMap.put("What outfit is good for a party?",
+                "Party outfits can include dresses, stylish tops with jeans, or statement pieces.");
+
+        qaMap.put("What should I wear to office?",
+                "Go for clean, fitted outfits like shirts, trousers, kurtis, or formal dresses.");
+
+        qaMap.put("What to wear on a first date?",
+                "Wear something comfortable and confident—smart casual outfits work best.");
+
+        qaMap.put("What should I wear for college daily?",
+                "Comfortable basics like jeans, tops, kurtis, or casual dresses are perfect.");
+
+        qaMap.put("What outfit suits a formal event?",
+                "Structured outfits like blazers, formal dresses, or tailored suits work well.");
+
+        qaMap.put("What clothes suit pear-shaped body?",
+                "A-line dresses, high-waist bottoms, and balanced tops suit pear-shaped bodies.");
+
+        qaMap.put("What clothes make me look taller?",
+                "High-waist bottoms, monochrome outfits, and vertical stripes help elongate height.");
+
+        qaMap.put("What outfits hide belly fat?",
+                "Flowy tops, high-waist bottoms, and layered outfits help conceal the midsection.");
+
+        qaMap.put("What to wear in summer?",
+                "Light fabrics like cotton and linen in breathable, light colors are best.");
+
+        qaMap.put("What outfits suit winter?",
+                "Layered outfits with sweaters, coats, and boots work well in winter.");
+
+        qaMap.put("What accessories suit simple outfits?",
+                "Minimal jewelry, a nice bag, or statement footwear can elevate simple outfits.");
+
+        qaMap.put("How to match belt with shoes?",
+                "Matching belt color with shoe color creates a clean and polished look.");
+
+        qaMap.put("What bag suits casual outfits?",
+                "Tote bags, sling bags, or backpacks work well for casual outfits.");
+
     }
 
-    // ✅ Inflate top 3-dot menu
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.top_menu_events, menu); // use your existing menu XML
-        super.onCreateOptionsMenu(menu, inflater);
-    }
+    private String getClosestAnswer(String userInput) {
+        String closestQuestion = null;
+        int minDistance = Integer.MAX_VALUE;
 
-    // ✅ Handle menu clicks (IF–ELSE style)
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-        if (item.getItemId() == R.id.menu_profile) {
-            startActivity(new Intent(getActivity(), ProfileActivity.class));
-            return true;
-
-        } else if (item.getItemId() == R.id.menu_report) {
-            // Handle report action
-            Toast.makeText(getActivity(), "Report clicked", Toast.LENGTH_SHORT).show();
-            return true;
-
-        } else if (item.getItemId() == R.id.menu_logout) {
-            showLogoutDialog();
-            return true;
+        for (String question : qaMap.keySet()) {
+            int distance = levenshteinDistance(userInput.toLowerCase(), question.toLowerCase());
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestQuestion = question;
+            }
         }
 
-        return super.onOptionsItemSelected(item);
+        if(minDistance > 30){ // adjust threshold if needed
+            return "Sorry, I don't have a suggestion for that yet.";
+        }
+
+        return qaMap.get(closestQuestion);
     }
 
-    // ✅ Logout dialog (Fragment-safe)
-    private void showLogoutDialog() {
-        new AlertDialog.Builder(getActivity())
-                .setTitle("Log Out")
-                .setMessage("Are you sure you want to logout?")
-                .setPositiveButton("Logout", (dialog, which) -> {
-                    Toast.makeText(getActivity(), "Logged Out", Toast.LENGTH_SHORT).show();
-                    // signOutUser(); // if you have a sign-out function
-                })
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                .show();
+    private int levenshteinDistance(String s1, String s2) {
+        int[][] dp = new int[s1.length() + 1][s2.length() + 1];
+
+        for(int i = 0; i <= s1.length(); i++) dp[i][0] = i;
+        for(int j = 0; j <= s2.length(); j++) dp[0][j] = j;
+
+        for(int i = 1; i <= s1.length(); i++) {
+            for(int j = 1; j <= s2.length(); j++) {
+                int cost = s1.charAt(i - 1) == s2.charAt(j - 1) ? 0 : 1;
+                dp[i][j] = Math.min(
+                        Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1),
+                        dp[i - 1][j - 1] + cost
+                );
+            }
+        }
+        return dp[s1.length()][s2.length()];
     }
 }

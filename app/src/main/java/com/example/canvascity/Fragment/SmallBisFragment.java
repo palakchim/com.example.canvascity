@@ -1,4 +1,4 @@
-package com.example.canvascity.Fragmet;
+package com.example.canvascity.Fragment;
 
 import android.app.AlertDialog;
 import android.content.Intent;

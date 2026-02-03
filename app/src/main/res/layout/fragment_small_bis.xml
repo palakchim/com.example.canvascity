@@ -1,91 +1,14 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/beige"
-    tools:context=".SmallBusinessFragment">
+    tools:context=".Fragmet.SmallBisFragment">
 
-    <!-- Header with Search & Buy/Sell Toggle -->
-    <LinearLayout
-        android:id="@+id/headerLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@color/sky_blue">
-
-        <EditText
-            android:id="@+id/searchBar"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="Search handmade products"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:background="@drawable/rounded_search"
-            android:drawableStart="@drawable/ic_search"
-            android:drawablePadding="8dp"
-            android:textColor="@color/black"
-            android:textSize="14sp"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="12dp"
-            android:gravity="center">
-
-            <Button
-                android:id="@+id/btnBuy"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="40dp"
-                android:text="Buy"
-                android:background="@drawable/gradient_buy"
-                android:textColor="@color/white"
-                android:textAllCaps="false"/>
-
-            <Button
-                android:id="@+id/btnSell"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="40dp"
-                android:text="Sell"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/gradient_sell"
-                android:textColor="@color/white"
-                android:textAllCaps="false"/>
-        </LinearLayout>
-    </LinearLayout>
-
-    <!-- Product List -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerProducts"
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/headerLayout"
-        android:padding="16dp"
-        android:clipToPadding="false"/>
+        android:text="@string/hello_blank_fragment" />
 
-    <!-- Floating Button for Selling -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAddProduct"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_add"
-        android:backgroundTint="@color/teal"
-        android:elevation="8dp"/>
-
-    <!-- Bottom Navigation -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigation"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/navy"
-        android:itemIconTint="@color/white"
-        android:itemTextColor="@color/white"
-        app:menu="@menu/bottom_nav_menu"/>
-</RelativeLayout>
+</FrameLayout>

@@ -11,18 +11,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.example.canvascity.EventModel;
+import com.example.canvascity.Activity.EventDetailsActivity;
 import com.example.canvascity.R;
+import com.example.canvascity.model.EventModel;
 
 import java.util.ArrayList;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
-    Context context;
     ArrayList<EventModel> eventList;
+    Context context;
 
-    // Constructor
     public EventAdapter(Context context, ArrayList<EventModel> eventList) {
         this.context = context;
         this.eventList = eventList;
@@ -31,7 +30,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     @NonNull
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context)
+        View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_event, parent, false);
         return new EventViewHolder(view);
     }
@@ -41,23 +40,28 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         EventModel model = eventList.get(position);
 
-        holder.txtTitle.setText(model.getTitle());
-        holder.txtDate.setText(model.getDate());
+        // ✅ TEXT DATA
+        holder.title.setText(model.getTitle());
+        holder.locationDate.setText(model.getLocationDate());
+        holder.price.setText(model.getPrice());
 
-        Glide.with(context)
-                .load(model.getImageUrl())
-               // .placeholder(R.drawable.placeholder) // optional
-                .into(holder.imgEvent);
+        // ✅ IMAGE FIX (MOST IMPORTANT)
+        if (model.getImage() != 0) {
+            holder.eventImage.setImageResource(model.getImage());
+        } else {
+            holder.eventImage.setImageResource(R.drawable.fashionimage);
+            // ek placeholder image add kar lena
+        }
 
-        // Click event
+        // ✅ CLICK SAFE (NO CRASH)
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, EventDetailsActivity.class);
             intent.putExtra("title", model.getTitle());
-            intent.putExtra("date", model.getDate());
+            intent.putExtra("locationDate", model.getLocationDate());
             intent.putExtra("price", model.getPrice());
-            intent.putExtra("location", model.getLocation());
             intent.putExtra("description", model.getDescription());
-            intent.putExtra("image", model.getImageUrl());
+            intent.putExtra("image", model.getImage());
+
             context.startActivity(intent);
         });
     }
@@ -69,17 +73,18 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     static class EventViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView imgEvent;
-        TextView txtTitle, txtDate;
+        TextView title, locationDate, price;
+        ImageView eventImage;
 
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            imgEvent = itemView.findViewById(R.id.imgEvent);
-            txtTitle = itemView.findViewById(R.id.txtTitle);
-            txtDate = itemView.findViewById(R.id.txtDate);
+            title = itemView.findViewById(R.id.tvEventTitle);
+            locationDate = itemView.findViewById(R.id.tvEventLocationDate);
+            price = itemView.findViewById(R.id.tvEventPrice);
+
+            // ✅ CORRECT ID (from item_event.xml)
+            eventImage = itemView.findViewById(R.id.imgEventThumb);
         }
     }
 }
-
-

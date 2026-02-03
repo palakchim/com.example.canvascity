@@ -1,34 +1,72 @@
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_margin="10dp"
     android:layout_height="wrap_content"
-    android:elevation="6dp">
+    android:layout_marginBottom="12dp"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp">
 
     <LinearLayout
-        android:padding="10dp"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp">
 
+        <!-- 🔹 Event Image -->
         <ImageView
-            android:id="@+id/imgEvent"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:scaleType="centerCrop"/>
+            android:id="@+id/imgEventThumb"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:layout_marginEnd="12dp"
+            android:contentDescription="Event image"/>
 
-        <TextView
-            android:id="@+id/txtTitle"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:paddingTop="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+        <!-- 🔹 Event Info -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/txtDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/tvEventTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Event Name"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/tvEventLocationDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mumbai · 22 Dec"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp"/>
+
+            <TextView
+                android:id="@+id/tvEventPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="₹499"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:layout_marginTop="6dp"
+                android:textColor="#2E7D32"/>
+
+            <!-- 🔹 Hint text -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tap to view details"
+                android:textSize="12sp"
+                android:textColor="#888"
+                android:layout_marginTop="6dp"/>
+        </LinearLayout>
 
     </LinearLayout>
+
 </androidx.cardview.widget.CardView>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#F5EFE6">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Page Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="About This Event"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#000" />
+
+        <!-- About Event Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvAboutTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Fashion Expo 2025"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="#000" />
+
+                <TextView
+                    android:id="@+id/tvAboutDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Fashion Expo 2025 is a premium fashion event where top designers, brands, and fashion lovers come together.
+
+This event includes live runway shows, fashion exhibitions, designer collections, influencer meet-ups, and entertainment zones.
+
+It is specially designed for fashion enthusiasts, entrepreneurs, and students who want to explore new trends and opportunities."
+                    android:textSize="15sp"
+                    android:textColor="#444"
+                    android:layout_marginTop="10dp" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Extra Info Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Event Details"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="#000" />
+                <TextView
+                    android:id="@+id/tvLocationDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="📍 Location: Mumbai
+📅 Date: 22 December 2025
+⏱ Duration: 3 Hours
+👤 Organized by: Style Inc."
+                    android:textSize="14sp"
+                    android:textColor="#555"
+                    android:layout_marginTop="8dp" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+</ScrollView>
